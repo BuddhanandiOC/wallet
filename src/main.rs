@@ -9,27 +9,17 @@ enum Coins {
 
 impl Coins {
     fn from(vals: Vec<u8>) -> Vec<Coins> {
-        vals
-            .iter()
-            .map(|n| match n {
-                1 => Some(1),
-                5 => Some(5),
-                10 => Some(10),
-                25 => Some(25),
-                50 => Some(50),
-                100 => Some(100),
+        vals.iter()
+            .filter_map(|n| match n {
+                1 => Some(Coins::Penny),
+                5 => Some(Coins::Nickel),
+                10 => Some(Coins::Dime),
+                25 => Some(Coins::Quarter),
+                50 => Some(Coins::HalfDollar),
+                100 => Some(Coins::Dollar),
                 _ => None,
             })
-            .filter(|n| n.is_some())
-            .map(|n| match n {
-                Some(1) => Coins::Penny,
-                Some(5) => Coins::Nickel,
-                Some(10) => Coins::Dime,
-                Some(25) => Coins::Quarter,
-                Some(50) => Coins::HalfDollar,
-                Some(100) => Coins::Dollar,
-                _ => Coins::Penny, // TODO: find a way to get rid of this since None was filtered
-            }).collect()
+            .collect()
     }
 }
 
@@ -45,29 +35,18 @@ enum Bills {
 
 impl Bills {
     fn from(vals: Vec<u8>) -> Vec<Bills> {
-        vals
-            .iter()
-            .map(|n| match n {
-                1 => Some(1),
-                2 => Some(2),
-                5 => Some(5),
-                10 => Some(10),
-                20 => Some(20),
-                50 => Some(50),
-                100 => Some(100),
+        vals.iter()
+            .filter_map(|n| match n {
+                1 => Some(Bills::One),
+                2 => Some(Bills::Two),
+                5 => Some(Bills::Five),
+                10 => Some(Bills::Ten),
+                20 => Some(Bills::Twenty),
+                50 => Some(Bills::Fifty),
+                100 => Some(Bills::Hundred),
                 _ => None,
             })
-            .filter(|n| n.is_some())
-            .map(|n| match n {
-                Some(1) => Bills::One,
-                Some(2) => Bills::Two,
-                Some(5) => Bills::Five,
-                Some(10) => Bills::Ten,
-                Some(20) => Bills::Twenty,
-                Some(50) => Bills::Fifty,
-                Some(100) => Bills::Hundred,
-                _ => Bills::One, // TODO: find a way to get rid of this since None was filtered
-            }).collect()
+            .collect()
     }
 }
 
@@ -122,10 +101,13 @@ impl Wallet {
 
 fn main() {
     let mut wallet = Wallet::from(
-        Bills::from(vec![1, 1, 2, 5, 5, 10, 20, 50, 100, 100]),
-        Coins::from(vec![1, 1, 1, 5, 10, 25, 25, 50, 100, 100])
+        Bills::from(vec![1, 1, 2, 5, 5, 10, 11, 20, 50, 100, 100]),
+        Coins::from(vec![1, 1, 1, 5, 10, 11, 25, 25, 50, 100, 100]),
     );
 
     println!("Total value: {}", wallet.total());
     println!("Total value (prop): {}", wallet.total_value);
+
+    assert_eq!(297.18, wallet.total());
+    assert_eq!(297.18, wallet.total_value);
 }
